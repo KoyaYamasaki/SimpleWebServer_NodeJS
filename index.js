@@ -43,7 +43,7 @@ const parseFile = async (path) => {
             },
             codec: metadata.format.codec
         }
-        return jsonData2
+        return metadata
     })
     .catch(err => {
         console.log(err)
@@ -78,9 +78,49 @@ app.get(`/list/:artist`, (req, res) => {
     fullPathArrray.forEach((path) => {
         parseFileArray.push(parseFile(path))
     })
-    Promise.all(parseFileArray).then((data) => {
-        console.log("data", data)
-        res.json(data)
+    Promise.all(parseFileArray).then((metadatas) => {
+        // console.log("metadatas", metadatas)
+        let songs = []
+        var contentsCount = []
+        var albumTitle = ""
+        metadatas.forEach((metadata, index) => {
+            if (albumTitle !== metadata.common.album) {
+                albumTitle = metadata.common.album
+                contentsCount.push(metadata.common.track[`of`])
+            }
+            song = {
+                title: metadata.common.title,
+                duration: metadata.format.duration,
+                track: metadata.common.track[`no`],
+                uri: fullPathArrray[index]
+            }
+            // console.log("song : ", song)
+            songs.push(song)
+        })
+
+        var i = 0
+        var responseJson = []
+        contentsCount.forEach((count, index) => {
+            count += i
+            var songsForAlbum = []
+            console.log("count: ", count)
+            for (i; i < count; i++) {
+                songsForAlbum.push(songs[i])
+                // console.log("foreach: ", songs[i])
+            }
+
+            var json = {
+                artist: metadatas[i-1].common.artist,
+                albumeTitle: metadatas[i-1].common.album,
+                tracks: metadatas[i-1].common.track[`of`],
+                songs: songsForAlbum
+            }
+            responseJson.push(json)
+            console.log("json: ", json)
+            i = count
+        })
+
+        res.json(responseJson)
         res.end()
     })
 })
@@ -117,12 +157,8 @@ app.get(`/list`, (req, res) => {
 
 })
 
-app.get(`/tracks/:album/:trackName`, (req, res) => {
-    console.log(req.params.trackName)
-
-    var music = trackDataPath + "/" + req.params.album + "/" + req.params.trackName;
-
-    var stat = fs.statSync(music);
+app.get(`/:uri`, (req, res) => {
+    var stat = fs.statSync(req.params.uri);
     range = req.headers.range;
     var readStream;
 
