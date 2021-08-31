@@ -7,12 +7,9 @@ const ignoreFile = ".DS_Store"
 var fullPathArray = Array()
 
 const getArtistList = (req, res) => {
-    let jsonArray = getAllArtists(trackBasePath)
+    let jsonArray = getArtistListJson(trackBasePath)
     res.json(jsonArray)
     res.end()
-    // artist: String
-    // album_title: Array of string
-    // artwork?
 }
 
 const getAlbumList = (req, res) => {
@@ -24,11 +21,13 @@ const getAlbumList = (req, res) => {
         parseFileArray.push(parseFile(path))
     })
     Promise.all(parseFileArray).then((metadatas) => {
-        // console.log("metadatas", metadatas)
+        console.log("metadata", metadatas)
         let songs = []
         var contentsCount = []
         var albumTitle = ""
         metadatas.forEach((metadata, index) => {
+            const img = metadata.common.picture[0]["data"].toString('base64')
+            // console.log("img", img)
             if (albumTitle !== metadata.common.album) {
                 albumTitle = metadata.common.album
                 contentsCount.push(metadata.common.track[`of`])
@@ -39,7 +38,6 @@ const getAlbumList = (req, res) => {
                 track: metadata.common.track[`no`],
                 uri: fullPathArrray[index]
             }
-            // console.log("song : ", song)
             songs.push(song)
         })
 
@@ -58,6 +56,7 @@ const getAlbumList = (req, res) => {
                 artist: metadatas[i-1].common.artist,
                 title: metadatas[i-1].common.album,
                 tracks: metadatas[i-1].common.track[`of`],
+                image: metadatas[i-1].common.picture[0]["data"].toString('base64'),
                 songs: songsForAlbum
             }
             responseJson.push(json)
@@ -110,26 +109,33 @@ const getSelectedTrack = (req, res) => {
     readStream.pipe(res);
 }
 
-function getAllArtists(dir) {
+function getArtistListJson(dir) {
     var jsonArray = []
     const artistNames = fs.readdirSync(dir);
-    artistNames.forEach((artistName => {
+    const filteredArtist = artistNames.filter(elem => elem !== ignoreFile)
+    filteredArtist.forEach((artistName => {
+        const imageData = getArtistImage(artistName)
         const fullPath = path.join(dir, artistName);
         const stats = fs.statSync(fullPath);
     if (stats.isDirectory()) {
             const albums = fs.readdirSync(fullPath)
             const filteredAlbums = albums.filter(elem => elem !== ignoreFile)
-            console.log(artistName)
-            console.log(filteredAlbums)
+            // console.log(artistName)
             json = {
-                artist: artistName,
-                albums: filteredAlbums
+                name: artistName,
+                image: imageData
+                // albums: filteredAlbums
             }
             jsonArray.push(json)
         }
     }))
-    // path.dirname(dir).split(path.sep).pop()
     return jsonArray
+}
+
+function getArtistImage(artistName) {
+    const url = './images/' + artistName + '/Artist.jpeg'
+    const imageData = fs.readFileSync(url)
+    return imageData.toString('base64');
 }
 
 function findResources(dir) {
@@ -158,31 +164,6 @@ const parseFile = async (path) => {
     await mm.parseFile(path, {native: false})
         .then(metadata => {
         // console.log("metadata", metadata)
-        // console.log(metadata.common.artist)
-
-        let jsonData = {
-            track: metadata.common.track[`no`],
-            artist: metadata.common.artist,
-            title: metadata.common.title,
-            album: metadata.common.album,
-            duration: metadata.format.duration,
-            codec: metadata.format.codec,
-            uri: path,
-            trackInfo: metadata.format.trackInfo,
-        }
-
-        let jsonData2 = {
-            album: metadata.common.album,
-            // image: metadata.common.picture
-            songs: {
-                track: metadata.common.track[`no`],
-                artist: metadata.common.artist,
-                title: metadata.common.title,
-                duration: metadata.format.duration,
-                uri: path,
-            },
-            codec: metadata.format.codec
-        }
         return metadata
     })
     .catch(err => {
@@ -193,5 +174,6 @@ const parseFile = async (path) => {
 module.exports = {
     getArtistList,
     getAlbumList,
-    getSelectedTrack
+    getSelectedTrack,
+    // getArtistImage
 }

@@ -4,7 +4,7 @@ const router = express.Router()
 const {
   getArtistList,
   getAlbumList,
-  getSelectedTrack
+  getSelectedTrack,
 } = require('./controller')
 
 router.get('/list', getArtistList)
