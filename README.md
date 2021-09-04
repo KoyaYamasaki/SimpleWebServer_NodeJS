@@ -11,6 +11,6 @@ root/
 　 │　　　  └ Artist.jpeg/
 　 ├ tracks/
 　 │ 　└ [artist name]/
-　 │　　 　└ [album name]/
-　 │　　 　  └ [audio files]/
+　 │　　  　└ [album name]/
+　 │　　 　   └ [audio files]/
  ```
