@@ -4,19 +4,24 @@
   box-sizing: border-box;
 }
 
-body {
-  background-color: #296ca8;
-  color: #fff;
-  font-family: 'Roboto', sans-serif;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; */
-  min-height: 100vh;
+:root {
+  --clr-blue: #148bd4;
+  --clr-white: #fff;
+  --ff-primary: "Roboto", sans-serif;
+  --ff-secondary: "Open Sans", sans-serif;
 
+  --light-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  --dark-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background: -webkit-linear-gradient(to right, #0b8793, #360033);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #0b8793, #360033); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  color: var(--clr-white);
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
   padding-bottom: 100px;
   height: 100vh;
-
   font-family: 'Lato', sans-serif;
   margin: 0;
 }
@@ -53,7 +58,7 @@ h1 {
 }
 
 .single-album {
-  background-color: #4992d3;
+  background-color: rgba(67, 23, 132, 0.216);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border-radius: 15px;
   margin: 20px 20px;
@@ -83,9 +88,9 @@ h1 {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 3px solid #4992d3;
-  background: #fff;
-  color: #296ca8;
+  border: 3px solid var(--clr-blue);
+  background: var(--clr-white);
+  color: var(--clr-blue);
   cursor: pointer;
   text-align: center;
   /* transform: translate(-50%, 50%); */
@@ -113,7 +118,7 @@ h1 {
 }
 
 .circle {
-  background-color: #fff;
+  background-color: var(--clr-white);
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -142,7 +147,7 @@ h1 {
 
 /* Controller bar */
 .music-container {
-  background-color: #fff;
+  background-color: var(--clr-white);
   border-radius: 15px;
   box-shadow: 0 20px 20px 0 rgba(252, 169, 169, 0.6);
   display: flex;
@@ -164,7 +169,7 @@ h1 {
 
 .img-container::after {
   content: '';
-  background-color: #fff;
+  background-color: var(--clr-white);
   border-radius: 50%;
   position: absolute;
   bottom: 100%;
@@ -209,9 +214,9 @@ h1 {
 }
 
 .action-btn {
-  background-color: #fff;
+  background-color: var(--clr-white);
   border: 0;
-  color: #148bd4;
+  color: var(--clr-blue);
   font-size: 20px;
   cursor: pointer;
   padding: 10px;
@@ -219,7 +224,7 @@ h1 {
 }
 
 .action-btn.action-btn-big {
-  color: #cdc2d0;
+  color: var(--clr-blue);
   font-size: 30px;
 }
 
@@ -251,7 +256,7 @@ h1 {
 }
 
 .progress-container {
-  background: #fff;
+  background: var(--clr-white);
   border-radius: 5px;
   cursor: pointer;
   margin: 10px 0;
