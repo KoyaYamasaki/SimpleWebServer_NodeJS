@@ -1,4 +1,4 @@
-const postsContainer = document.getElementById('posts-container')
+const albumList = document.getElementById('album-list')
 const loading = document.querySelector('.loader')
 const filter = document.getElementById('filter')
 var allDatas = new Array()
@@ -24,9 +24,9 @@ async function showAlbums() {
     allDatas = result
     result.forEach((artistAlbums, artistIndex) => {
       artistAlbums.forEach(album => {
-        const postEl = document.createElement('div');
-        postEl.classList.add('post');
-        postEl.innerHTML = `
+        const albumElem = document.createElement('div');
+        albumElem.classList.add('single-album');
+        albumElem.innerHTML = `
           <div class="album-container">
             <div class="artwork-wrapper">
               <img class="artwork" src=data:image/png;base64,${album.image}>
@@ -37,13 +37,13 @@ async function showAlbums() {
               </button>
             </div>
             <div class="album-info">
-              <p class="post-title">${album.artist}</p>
-              <p class="post-body">${album.title}</p>
+              <p class="album-artist">${album.artist}</p>
+              <p class="album-title">${album.title}</p>
             </div>
           </div>
         `;
     
-        postsContainer.appendChild(postEl);
+        albumList.appendChild(albumElem);
       })
     })
 
@@ -83,25 +83,6 @@ const getAlbum = async (path) => {
   })
 }
 
-// Show posts in DOM
-async function showPosts() {
-  const posts = await getPosts();
-
-  posts.forEach(post => {
-    const postEl = document.createElement('div');
-    postEl.classList.add('post');
-    postEl.innerHTML = `
-      <div class="album-play">${post.id}</div>
-      <div class="post-info">
-        <h2 class="post-title">${post.title}</h2>
-        <p class="post-body">${post.body}</p>
-      </div>
-    `;
-
-    postsContainer.appendChild(postEl);
-  });
-}
-
 // Show loader & fetch more posts
 function showLoading() {
   loading.classList.add('show');
@@ -116,24 +97,24 @@ function showLoading() {
   }, 1000);
 }
 
-// Filter posts by input
+// Filter albums by input
 function filterPosts(e) {
   const term = e.target.value.toUpperCase();
-  const posts = document.querySelectorAll('.post');
+  const albumsElem = document.querySelectorAll('.single-album');
 
-  posts.forEach(post => {
-    const title = post.querySelector('.post-title').innerText.toUpperCase();
-    const body = post.querySelector('.post-body').innerText.toUpperCase();
+  albumsElem.forEach(albumElem => {
+    const title = albumElem.querySelector('.album-artist').innerText.toUpperCase();
+    const body = albumElem.querySelector('.album-title').innerText.toUpperCase();
 
     if (title.indexOf(term) > -1 || body.indexOf(term) > -1) {
-      post.style.display = 'flex';
+      albumElem.style.display = 'flex';
     } else {
-      post.style.display = 'none';
+      albumElem.style.display = 'none';
     }
   });
 }
 
-// Show initial posts
+// Show initial albums
 showAlbums()
 
 window.addEventListener('scroll', () => {
