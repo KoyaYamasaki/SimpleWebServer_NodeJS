@@ -123,8 +123,8 @@ function getArtistListJson(dir) {
             // console.log(artistName)
             json = {
                 name: artistName,
-                image: imageData
-                // albums: filteredAlbums
+                image: imageData,
+                // albums: new Array()
             }
             jsonArray.push(json)
         }
