@@ -60,12 +60,11 @@ html {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 body {
-  background: var(--backgroundColor);
+  background: -webkit-linear-gradient(to right, #0b8793, #360033);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #0b8793, #360033); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   font-family: var(--bodyFont);
   font-weight: 400;
   line-height: 1.75;
@@ -137,9 +136,9 @@ li {
 }
 /* buttons */
 
-.btn {
+.btn-upload {
   cursor: pointer;
-  color: var(--white);
+  color: var(--clr-white);
   background: var(--primary-500);
   border: transparent;
   border-radius: var(--borderRadius);
@@ -150,7 +149,7 @@ li {
   text-transform: capitalize;
   display: inline-block;
 }
-.btn:hover {
+.btn-upload:hover {
   background: var(--primary-700);
   box-shadow: var(--shadow-3);
 }
@@ -162,7 +161,7 @@ li {
   color: var(--primary-200);
   background: var(--primary-700);
 }
-.btn-block {
+.btn-upload {
   width: 100%;
 }
 
@@ -283,4 +282,44 @@ max-width: 400px;
 
 .show {
   visibility: visible;
+}
+
+/* Nav */
+
+.nav-links {
+  margin: 1rem;
+  padding-left: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 4rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: var(--clr-white);
+}
+
+.nav-links li {
+  display: flex;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.nav-links li a {
+  color: black;
+  font-size: 20px;
+  font-family: 'Oswald', sans-serif;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+}
+
+.nav-links .selected-page {
+  background-color: rgb(88, 54, 139);
+}
+
+.nav-links .selected-page a {
+  color: var(--clr-white);
+}
+
+.nav-links li:hover:not(.selected-page) {
+  cursor: pointer;
+  transform: scale(1.2);
 }

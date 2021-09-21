@@ -2,15 +2,14 @@ const express     = require('express');
 const app         = express();
 const fileUpload = require('express-fileupload');
 
-const router = require(`./router/router`)
-// product router
-const productRouter = require('./router/productRoutes');
+const playerRoutes = require(`./router/playerRoutes`)
+const uploadRoutes = require('./router/uploadRoutes');
 
 app.use(fileUpload({ useTempFiles: true }));
 
 
-app.use('/', router)
-app.use('/upload', productRouter)
+app.use('/', playerRoutes)
+app.use('/upload', uploadRoutes)
 
 // front end
 app.use(express.static('public'))
