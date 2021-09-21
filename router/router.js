@@ -5,7 +5,7 @@ const {
   getArtistList,
   getAlbumList,
   getSelectedTrack,
-} = require('./controller')
+} = require('../controllers/controller')
 
 router.get('/list', getArtistList)
 router.get('/list/:artist', getAlbumList)
