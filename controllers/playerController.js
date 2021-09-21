@@ -21,7 +21,6 @@ const getAlbumList = (req, res) => {
         parseFileArray.push(parseFile(path))
     })
     Promise.all(parseFileArray).then((metadatas) => {
-        console.log("metadata", metadatas)
         let songs = []
         var contentsCount = []
         var albumTitle = ""
@@ -60,7 +59,6 @@ const getAlbumList = (req, res) => {
                 songs: songsForAlbum
             }
             responseJson.push(json)
-            console.log("json: ", json)
             i = count
         })
 
@@ -120,7 +118,6 @@ function getArtistListJson(dir) {
     if (stats.isDirectory()) {
             const albums = fs.readdirSync(fullPath)
             const filteredAlbums = albums.filter(elem => elem !== ignoreFile)
-            // console.log(artistName)
             json = {
                 name: artistName,
                 image: imageData,
@@ -148,7 +145,6 @@ function findResources(dir) {
       const stats = fs.statSync(fullPath);
   
       if (stats.isFile()) {
-          console.log("fullPath", fullPath);
           fullPathArray.push(fullPath)
       } else if (stats.isDirectory()) {
           console.log(`this is directory`)
@@ -163,7 +159,6 @@ const parseFile = async (path) => {
     return parsedFile =
     await mm.parseFile(path, {native: false})
         .then(metadata => {
-        // console.log("metadata", metadata)
         return metadata
     })
     .catch(err => {
