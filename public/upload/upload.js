@@ -60,14 +60,15 @@ function showAlbumList(event) {
 
 fileFormDOM.addEventListener('submit',async (e)=>{
   e.preventDefault()
-  console.log(e.target.files)
 
   if (importArtistImage !== undefined) {
     await postArtistImage()
   }
 
-  for (var i=0; i<importTracks.length; i++) {
-    await postSingleFile(importTracks[i])
+  if (importTracks !== undefined) {
+    for (var i=0; i<importTracks.length; i++) {
+      await postSingleTrack(importTracks[i])
+    }
   }
 })
 
@@ -92,7 +93,7 @@ function getAlbumInfo(file) {
   })
 }
 
-function postSingleFile(file) {
+function postSingleTrack(file) {
   const formData = new FormData();
   formData.append('track', file)
   return axios.post(`${url}/uploadTrack`, formData, {

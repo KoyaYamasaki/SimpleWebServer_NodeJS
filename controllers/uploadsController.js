@@ -4,7 +4,6 @@ const CustomError = require('../errors');
 const fs = require('fs');
 const mm = require(`music-metadata`)
 
-const trackBasePath = "./tracks"
 const ignoreFile = ".DS_Store"
 const trackUrl = './tracks/'
 const imageUrl = './images/'
@@ -63,25 +62,23 @@ const uploadArtistImage = async (req, res) => {
     throw new CustomError.BadRequestError('No File Uploaded');
   }
 
-  placeArtistImage(req.files.image)
+  const image = req.files.image
+  console.log(image)
+
+  const mkDirUrl = imageUrl + artistName
+  if (!fs.existsSync(mkDirUrl)) {
+    fs.mkdirSync(mkDirUrl, {recursive: true });
+  }
+
+  const imagePath = path.join(
+    __dirname,
+    "../" + imageUrl + artistName + "/Artist.jpeg"
+  );
+  image.mv(imagePath)
 
   return res
   .status(StatusCodes.OK)
   .send()
-}
-
-function placeArtistImage(file) {
-  const mkDirUrl = imageUrl + artistName
-  fs.mkdir(mkDirUrl, (err) => {
-    if (err) { throw err; }
-    console.log('Succeeded to create folder');
-    const imagePath =
-      path.join(
-        __dirname,
-        "../" + imageUrl + artistName + "/Artist.jpeg"
-    );
-    file.mv(imagePath)
-  });
 }
 
 const uploadTrack = async (req, res) => {
@@ -94,7 +91,7 @@ const uploadTrack = async (req, res) => {
   const track = req.files.track;
   const mkDirUrl = trackUrl + artistName + "/" + albumName
   if (!fs.existsSync(mkDirUrl)) {
-    await fs.mkdir(mkDirUrl, {recursive: true });
+    fs.mkdirSync(mkDirUrl, {recursive: true });
   }
 
   const trackPath =
@@ -106,7 +103,7 @@ const uploadTrack = async (req, res) => {
 
   return res
   .status(StatusCodes.OK)
-  .send()
+  .json({ isSucceeded : true })
 }
 
 function makeDirectory() {
