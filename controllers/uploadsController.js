@@ -6,6 +6,11 @@ const mm = require(`music-metadata`)
 
 const trackBasePath = "./tracks"
 const ignoreFile = ".DS_Store"
+const trackUrl = './tracks/'
+const imageUrl = './images/'
+
+let artistName;
+let albumName;
 
 const getAlbumInfo = async (req, res) => {
   console.log(req.files.track)
@@ -16,8 +21,10 @@ const getAlbumInfo = async (req, res) => {
   const track = req.files.track;
   const trackInfo = await parseFile(track.tempFilePath);
   console.log(trackInfo.common)
+  artistName = trackInfo.common.artist
+  albumName = trackInfo.common.album
   const json = {
-    artist: trackInfo.common.artist,
+    artist: artistName,
     artistImage: getArtistImage(trackInfo.common.artist),
     album: trackInfo.common.album,
     albumImage: trackInfo.common.picture[0]["data"].toString('base64'),
@@ -32,7 +39,6 @@ const parseFile = (path) => {
   return parsedFile = 
     mm.parseFile(path, {native: false})
       .then(metadata => {
-      // console.log("metadata", metadata)
       return metadata
   })
   .catch(err => {
@@ -52,61 +58,75 @@ function getArtistImage(artistName) {
   return imageData.toString('base64');
 }
 
-const uploadProductImageLocal = async (req, res) => {
-  console.log(req.files)
-  if (!req.files) {
-    throw new CustomError.BadRequestError('No File Uploaded');
-  }
-
-  const productImage = req.files.image;
-  const imagePath = path.join(
-    __dirname,
-    '../public/uploads/' + `${productImage.name}`
-  );
-  productImage.mv(imagePath);
-
-  return res
-  .status(StatusCodes.OK)
-  .json({ image: { src: `/uploads/` } });
-};
-
 const uploadArtistImage = async (req, res) => {
   if (!req.files) {
     throw new CustomError.BadRequestError('No File Uploaded');
   }
 
-  files.forEach(elem => {
-    const productImage = elem.image;
-    const imagePath = path.join(
-      __dirname,
-      '/images/uploads/' + `${productImage.name}`);
+  placeArtistImage(req.files.image)
+
+  return res
+  .status(StatusCodes.OK)
+  .send()
+}
+
+function placeArtistImage(file) {
+  const mkDirUrl = imageUrl + artistName
+  fs.mkdir(mkDirUrl, (err) => {
+    if (err) { throw err; }
+    console.log('Succeeded to create folder');
+    const imagePath =
+      path.join(
+        __dirname,
+        "../" + imageUrl + artistName + "/Artist.jpeg"
+    );
+    file.mv(imagePath)
   });
 }
 
-const uploadAlbumImage = async (req, res) => {
-
-}
-
-const uploadMultipleFiles = async (req, res) => {
+const uploadTrack = async (req, res) => {
   console.log(req.files)
   if (!req.files) {
     throw new CustomError.BadRequestError('No File Uploaded');
   }
-  files.forEach(elem => {
-    const productImage = elem.image;
-    const imagePath = path.join(
-      __dirname,
-      '../public/uploads/' + `${productImage.name}`
-    );
-    productImage.mv(imagePath);
-  });
+
+  // const url = trackUrl + artistName
+  const track = req.files.track;
+  const mkDirUrl = trackUrl + artistName + "/" + albumName
+  if (!fs.existsSync(mkDirUrl)) {
+    await fs.mkdir(mkDirUrl, {recursive: true });
+  }
+
+  const trackPath =
+  path.join(
+    __dirname,
+    "../" + trackUrl + artistName + "/" + albumName + "/" + track.name
+  );
+  track.mv(trackPath)
 
   return res
   .status(StatusCodes.OK)
-  .json({ image: { src: `/uploads/` } });
+  .send()
+}
+
+function makeDirectory() {
+  // TODO
+}
+
+function uploadMultipleFiles(files) {
+  const url = trackUrl + artistName
+
+  files.forEach(elem => {
+    const track = elem.track;
+    const trackPath = path.join(
+      __dirname, url + `${track.name}`);
+
+    track.mv(trackPath);
+  });
 }
 
 module.exports = {
-  uploadProductImageLocal,
-  getAlbumInfo
+  getAlbumInfo,
+  uploadArtistImage,
+  uploadTrack
 };

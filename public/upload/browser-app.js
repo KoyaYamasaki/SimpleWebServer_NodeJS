@@ -2,10 +2,16 @@ const url = '/upload'
 const fileFormDOM = document.querySelector('.file-form')
 
 const tracksInputDOM = document.querySelector('#import-tracks')
+const artistImageDOM = document.querySelector('#artist-image')
 
 const resultDOM = document.getElementById('result')
 let importTracks = new Array();
+let importArtistImage;
 
+artistImageDOM.addEventListener('change', async (e) => {
+  importArtistImage = e.target.files[0]
+  console.log(importArtistImage)
+})
 
 tracksInputDOM.addEventListener('change', async (e)=>{
   const result = await getAlbumInfo(e.target.files[0])
@@ -53,19 +59,27 @@ function showAlbumList(event) {
 }
 
 fileFormDOM.addEventListener('submit',async (e)=>{
-e.preventDefault()
-console.log(e.target.files)
-//  const imageFile = e.target.files[0];
-//  const formData = new FormData();
- let ary = e.target.files
- for (var i=0; i<ary.length; i++) {
-  // formData.append('image', ary[i])
-   const formData = new FormData();
-  formData.append('image', ary[i])
+  e.preventDefault()
+  console.log(e.target.files)
 
-  postSingleFile(formData)
- }
+  if (importArtistImage !== undefined) {
+    await postArtistImage()
+  }
+
+  for (var i=0; i<importTracks.length; i++) {
+    await postSingleFile(importTracks[i])
+  }
 })
+
+function postArtistImage() {
+  const formData = new FormData()
+  formData.append('image', importArtistImage)
+  return axios.post(`${url}/uploadArtistImage`, formData, {
+    headers: {
+      'Content-Type':'multipart/form-data'
+     }   
+  })
+}
 
 function getAlbumInfo(file) {
   console.log(file)
@@ -78,17 +92,12 @@ function getAlbumInfo(file) {
   })
 }
 
-function postSingleFile(formData) {
-  try {
-    axios.post(`${url}/uploads`, formData, {
+function postSingleFile(file) {
+  const formData = new FormData();
+  formData.append('track', file)
+  return axios.post(`${url}/uploadTrack`, formData, {
      headers: {
       'Content-Type':'multipart/form-data'
      }
-    })
-    console.log("After uploads")
-    // imageValue = src
-   } catch (error) {
-    //  imageValue = null
-    console.log(error);
-   }
+  })
 }
